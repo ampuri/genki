@@ -15,6 +15,7 @@ mark {
   padding: 0 1px;
 }
 
+/* ── outer PointCard grammar-table ── */
 .grammar-table td {
   vertical-align: top;
   padding: 0.4rem 0.6rem;
@@ -26,4 +27,58 @@ mark {
   font-size: 0.85rem;
   color: #6b7280;
   min-width: 5rem;
+}
+
+/* ── source-site classes used inside HTML fields ── */
+
+/* Green accent color matching the original */
+.main-color {
+  color: #3a9142;
+}
+
+/* Inner tables (conjugation charts inside explanations) */
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+}
+
+.table td,
+.table th {
+  border: 1px solid #d1d5db;
+  padding: 0.3rem 0.6rem;
+  vertical-align: middle;
+}
+
+/* Green header rows */
+.table-head td,
+.table-head th {
+  background-color: #dcf0de;
+  color: #1e5c24;
+  font-weight: 600;
+  text-align: center;
+}
+
+.center {
+  text-align: center;
+}
+
+/* Example columns inside explanation (columns-2-in layout) */
+.columns-2-in {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+/* Prose spacing for lists / paragraphs inside HTML fields */
+.grammar-table td ul,
+.grammar-table td ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.grammar-table td li {
+  margin-bottom: 0.15rem;
 }

@@ -5,7 +5,20 @@ const html = readFileSync('data/source/grammar-index.html', 'utf8');
 const $ = load(html);
 
 const LIVE = 'https://sethclydesdale.github.io/genki-study-resources/lessons-3rd/';
-const ALLOWED_TAGS = new Set(['ruby', 'rt', 'strong', 'em', 'br', 'ul', 'ol', 'li', 'a', 'div', 'span']);
+const ALLOWED_TAGS = new Set([
+  'ruby', 'rt', 'strong', 'em', 'br', 'ul', 'ol', 'li', 'a', 'div', 'span',
+  'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'caption',
+  'p', 'h3', 'h4',
+]);
+
+// Font Awesome private-use codepoints used inside grammar content
+const FA_REPLACE = new Map([
+  ['\uF061', '→'],  // fa-arrow-right
+  ['\uF060', '←'],  // fa-arrow-left
+  ['\uF07E', '↔'],  // fa-arrows-h
+  ['\uF176', '↑'],  // fa-long-arrow-up
+  ['\uF175', '↓'],  // fa-long-arrow-down
+]);
 
 function stripMarkup(html) {
   if (!html) return '';
@@ -19,14 +32,26 @@ function stripMarkup(html) {
 }
 
 function sanitize($el) {
-  // Clone and sanitize HTML to allowed tags only
   const clone = $el.clone();
+
+  // Replace Font Awesome icon elements with plain Unicode arrows before stripping
+  clone.find('i.fa').each((_, el) => {
+    const text = $(el).text();
+    let replacement = '';
+    for (const [cp, arrow] of FA_REPLACE) {
+      if (text.includes(cp)) { replacement = arrow; break; }
+    }
+    $(el).replaceWith(replacement);
+  });
+
+  // Strip any remaining unknown tags, keeping their innerHTML
   clone.find('*').each((_, el) => {
     const tag = el.tagName ? el.tagName.toLowerCase() : '';
     if (!ALLOWED_TAGS.has(tag)) {
       $(el).replaceWith($(el).html() || '');
     }
   });
+
   return clone.html() || '';
 }
 
@@ -97,35 +122,17 @@ function rewritePracticeLinks($td) {
   $td.find('a').each((_, a) => {
     const href = $(a).attr('href') || '';
     const text = $(a).text().trim();
-    // relative href: ../../lesson-x/grammar-y/ -> https://...lessons-3rd/lesson-x/grammar-y/
     const abs = href.replace(/^\.\.\/\.\.\//, LIVE);
     if (text) links.push({ text, href: abs });
   });
   return links;
 }
 
-// Build lesson title map from <h2 id="lesson-grammar-N">
-const lessonTitles = {};
-$('h2.lesson-title[id^="lesson-grammar-"]').each((_, h2) => {
-  const id = $(h2).attr('id') || '';
-  const m = id.match(/lesson-grammar-(\d+)/);
-  if (!m) return;
-  const lesson = +m[1];
-  // Remove page-data span, extract just the lesson name
-  const $h2 = $(h2).clone();
-  $h2.find('.page-data').remove();
-  const text = $h2.text().trim();
-  // text like "Lesson 1: New Friends (...)"
-  const titleMatch = text.match(/Lesson \d+:\s*(.+)/);
-  lessonTitles[lesson] = titleMatch ? titleMatch[1].trim() : text;
-});
-
 const points = [];
 
 $('h3.workbook-title[id^="l"]').each((_, h3) => {
   const $h3 = $(h3);
   const id = $h3.attr('id') || '';
-  // Match both l1-p1 and l0-p01 style ids
   const m = id.match(/^l(\d+)-p(\d+)$/);
   if (!m) return;
 
@@ -138,7 +145,6 @@ $('h3.workbook-title[id^="l"]').each((_, h3) => {
   const page = $pageData.text().trim().replace(/^(Genki I|Genki II):\s*/, '');
   const book = $pageData.text().includes('Genki II') ? 'Genki II' : 'Genki I';
 
-  // title = h3 inner HTML minus the .page-data span
   const $titleClone = $h3.clone();
   $titleClone.find('.page-data').remove();
   const titleHtml = ($titleClone.html() || '').trim();
@@ -148,32 +154,31 @@ $('h3.workbook-title[id^="l"]').each((_, h3) => {
 
   const $table = $h3.next('table.grammar-table');
 
-  // Find a row by its Japanese label (first td text contains the label)
   const findRow = (label) => {
     let found = null;
     $table.find('tr').each((_, tr) => {
       const firstTdText = $(tr).find('td').first().text();
       if (firstTdText.includes(label)) {
         found = $(tr).find('td').eq(1);
-        return false; // break
+        return false;
       }
     });
     return found;
   };
 
-  const $honbunTd = findRow('本文');
+  const $honbunTd = findRow('本文');  // 本文
   const honbun = $honbunTd ? parseHonbun($honbunTd) : [];
 
-  const $setteiTd = findRow('説明');
+  const $setteiTd = findRow('説明');  // 説明
   const explanation = $setteiTd ? sanitize($setteiTd) : '';
 
-  const $hososokuTd = findRow('補足');
+  const $hososokuTd = findRow('補足');  // 補足
   const supplemental = $hososokuTd ? parseSupplemental($hososokuTd) : [];
 
-  const $eiyakuTd = findRow('英訳');
+  const $eiyakuTd = findRow('英訳');  // 英訳
   const englishEquivalent = $eiyakuTd ? sanitize($eiyakuTd) : '';
 
-  const $bunkeiTd = findRow('文型');
+  const $bunkeiTd = findRow('文型');  // 文型
   let patterns = [];
   if ($bunkeiTd) {
     const bunkeiHtml = $bunkeiTd.html() || '';
@@ -182,13 +187,12 @@ $('h3.workbook-title[id^="l"]').each((_, h3) => {
       .filter(Boolean);
   }
 
-  const $reibunTd = findRow('例文');
+  const $reibunTd = findRow('例文');  // 例文
   const examples = $reibunTd ? parseExamples($reibunTd) : [];
 
-  const $renshuTd = findRow('練習');
+  const $renshuTd = findRow('練習');  // 練習
   const practice = $renshuTd ? rewritePracticeLinks($renshuTd) : [];
 
-  // Build searchBlob: lowercase everything for search
   const searchBlob = [
     titlePlain,
     ...keywords,
@@ -225,7 +229,6 @@ if (points.length < 190) {
 
 console.log(`Extracted ${points.length} grammar points.`);
 
-// Spot-check
 const p1 = points.find(p => p.id === 'l1-p1');
 if (!p1) throw new Error('Missing l1-p1');
 if (p1.examples.length < 6) throw new Error(`l1-p1 has only ${p1.examples.length} examples`);
@@ -237,6 +240,11 @@ if (!p0.isExpressionNote) throw new Error('l0-p01 should be an expression note')
 const p13 = points.find(p => p.id === 'l13-p1');
 if (!p13) throw new Error('Missing l13-p1');
 if (p13.book !== 'Genki II') throw new Error(`l13-p1 book is ${p13.book}, expected Genki II`);
+
+// Spot-check: l8-p1 explanation should now contain a table
+const p8 = points.find(p => p.id === 'l8-p1');
+if (!p8) throw new Error('Missing l8-p1');
+if (!p8.explanation.includes('<table')) throw new Error('l8-p1 explanation missing embedded table');
 
 console.log('Spot checks passed. Writing grammar.json...');
 writeFileSync('src/data/grammar.json', JSON.stringify(points, null, 2));
