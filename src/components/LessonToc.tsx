@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import { getLessonGroups } from '../lib/data';
 import { Html } from '../lib/ruby';
 
-const ACCENT = '#66BB55';
+const GENKI1 = '#FF9933';
+const GENKI2 = '#66BB55';
 const lessonGroups = getLessonGroups();
 
 export default function LessonToc() {
@@ -11,18 +12,18 @@ export default function LessonToc() {
 
   return (
     <div className="space-y-8">
-      <BookSection title="Genki I" groups={genkiI} />
-      <BookSection title="Genki II" groups={genkiII} />
+      <BookSection title="Genki I" groups={genkiI} accent={GENKI1} />
+      <BookSection title="Genki II" groups={genkiII} accent={GENKI2} />
     </div>
   );
 }
 
-function BookSection({ title, groups }: { title: string; groups: typeof lessonGroups }) {
+function BookSection({ title, groups, accent }: { title: string; groups: typeof lessonGroups; accent: string }) {
   return (
     <section>
       <h2
         className="text-xl font-bold mb-3 pb-1"
-        style={{ color: ACCENT, borderBottom: `2px solid ${ACCENT}` }}
+        style={{ color: accent, borderBottom: `2px solid ${accent}` }}
       >
         {title}
       </h2>
@@ -42,7 +43,7 @@ function BookSection({ title, groups }: { title: string; groups: typeof lessonGr
                     <span className="text-gray-400 text-xs w-12 shrink-0">
                       {pt.isExpressionNote ? '表現' : `L${pt.lesson}`}
                     </span>
-                    <span className="group-hover:underline" style={{ color: ACCENT }}>
+                    <span className="group-hover:underline" style={{ color: accent }}>
                       <Html html={pt.title} />
                     </span>
                     <span className="text-gray-400 text-xs ml-auto">{pt.page}</span>

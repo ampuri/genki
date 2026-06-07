@@ -1,28 +1,31 @@
 import { Html } from '../lib/ruby';
 import type { GrammarPoint } from '../types';
 
-const ACCENT = '#66BB55';
+const GENKI1 = '#FF9933';
+const GENKI2 = '#66BB55';
 
 interface Props {
   point: GrammarPoint;
 }
 
 export default function PointCard({ point }: Props) {
+  const accent = point.book === 'Genki II' ? GENKI2 : GENKI1;
+
   return (
-    <div>
-      {/* Title row: green title + right-side badge */}
+    <div style={{ '--accent': accent } as React.CSSProperties}>
+      {/* Title row */}
       <div className="flex items-start justify-between gap-4 mb-3">
-        <h1 className="text-xl font-bold leading-snug" style={{ color: ACCENT }}>
+        <h1 className="text-xl font-bold leading-snug" style={{ color: accent }}>
           <Html html={point.title} />
           {point.isExpressionNote && (
-            <span className="ml-2 text-sm font-normal" style={{ color: ACCENT }}>
+            <span className="ml-2 text-sm font-normal" style={{ color: accent }}>
               (Expression Note)
             </span>
           )}
         </h1>
         <span
           className="text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0 self-center"
-          style={{ backgroundColor: ACCENT }}
+          style={{ backgroundColor: accent }}
         >
           {point.book}: {point.page}
         </span>
@@ -39,7 +42,7 @@ export default function PointCard({ point }: Props) {
                   {point.honbun.map((h, i) => (
                     <li key={i}>
                       <Html html={h.text} />
-                      {h.ref && <span className="text-gray-400 ml-2 text-xs">{h.ref}</span>}
+                      {h.ref && <><br /><Html html={h.ref} /></>}
                     </li>
                   ))}
                 </ul>
@@ -51,6 +54,36 @@ export default function PointCard({ point }: Props) {
             <tr>
               <td><ruby>説明<rt>せつめい</rt></ruby></td>
               <td><Html html={point.explanation} /></td>
+            </tr>
+          )}
+
+          {point.supplemental.length > 0 && (
+            <tr className="sup-list">
+              <td><ruby>補足<rt>ほそく</rt></ruby></td>
+              <td>
+                <div>
+                  {point.supplemental.map((sg, i) => (
+                    <div key={i} style={{ marginBottom: '6px' }}>
+                      <div className="font-bold text-sm" style={{ color: accent }}>{sg.label}</div>
+                      <ul>
+                        {sg.links.map((lk, j) => (
+                          <li key={j}>
+                            <a
+                              href={lk.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: accent }}
+                              className="underline"
+                            >
+                              {lk.text}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </td>
             </tr>
           )}
 
@@ -67,7 +100,7 @@ export default function PointCard({ point }: Props) {
               <td>
                 <ul>
                   {point.patterns.map((p, i) => (
-                    <li key={i} style={{ color: ACCENT }}>{p}</li>
+                    <li key={i} style={{ color: accent }}>{p}</li>
                   ))}
                 </ul>
               </td>
@@ -78,44 +111,16 @@ export default function PointCard({ point }: Props) {
             <tr>
               <td><ruby>例文<rt>れいぶん</rt></ruby></td>
               <td>
-                <ol style={{ paddingLeft: '1.5rem' }}>
+                <ol>
                   {point.examples.map((ex, i) => (
-                    <li key={i} style={{ marginBottom: '4px' }}>
-                      <Html html={ex.jp} className="inline" />
-                      <span className="text-gray-500 ml-3 text-xs">{ex.en}</span>
+                    <li key={i}>
+                      <div className="columns-2-in">
+                        <div className="example"><Html html={ex.jp} /></div>
+                        <div className="example">{ex.en}</div>
+                      </div>
                     </li>
                   ))}
                 </ol>
-              </td>
-            </tr>
-          )}
-
-          {point.supplemental.length > 0 && (
-            <tr className="sup-list">
-              <td><ruby>補足<rt>ほそく</rt></ruby></td>
-              <td>
-                <div>
-                  {point.supplemental.map((sg, i) => (
-                    <div key={i} style={{ marginBottom: '6px' }}>
-                      <div className="font-bold text-sm" style={{ color: ACCENT }}>{sg.label}</div>
-                      <ul>
-                        {sg.links.map((lk, j) => (
-                          <li key={j}>
-                            <a
-                              href={lk.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ color: ACCENT }}
-                              className="underline"
-                            >
-                              {lk.text}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
               </td>
             </tr>
           )}
@@ -131,7 +136,7 @@ export default function PointCard({ point }: Props) {
                         href={lk.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ color: ACCENT }}
+                        style={{ color: accent }}
                         className="underline"
                       >
                         {lk.text}

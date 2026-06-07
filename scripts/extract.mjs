@@ -92,25 +92,38 @@ function parseHonbun($td) {
   const items = [];
   $td.find('li').each((_, li) => {
     const html = $(li).html() || '';
-    // Split on <br> to separate JP from EN ref
+    // Split on <br> to separate JP from EN ref; preserve HTML in both parts
     const parts = html.split(/<br\s*\/?>/i);
     const text = parts[0] ? sanitize($(load('<span>' + parts[0] + '</span>')('span'))) : '';
-    const ref = parts[1] ? stripMarkup(parts[1]).trim() : undefined;
+    const refRaw = parts.slice(1).join('<br>').trim();
+    const ref = refRaw ? sanitize($(load('<span>' + refRaw + '</span>')('span'))) : undefined;
     if (text) items.push({ text, ref: ref || undefined });
   });
   return items;
 }
 
 // Parse 例文 (examples)
+// Source wraps each pair in a .columns-2-in div; a single <li> may contain multiple pairs.
 function parseExamples($td) {
   const examples = [];
   $td.find('li').each((_, li) => {
-    const $cols = $(li).find('.example');
-    if ($cols.length >= 2) {
-      examples.push({
-        jp: sanitize($cols.eq(0)),
-        en: $cols.eq(1).text().trim(),
+    const $pairs = $(li).find('.columns-2-in');
+    if ($pairs.length > 0) {
+      $pairs.each((_, col2) => {
+        const $exs = $(col2).find('.example');
+        if ($exs.length >= 2) {
+          examples.push({
+            jp: sanitize($exs.eq(0)),
+            en: $exs.eq(1).text().trim(),
+          });
+        }
       });
+    } else {
+      // Fallback: bare .example pair without .columns-2-in wrapper
+      const $exs = $(li).find('.example');
+      if ($exs.length >= 2) {
+        examples.push({ jp: sanitize($exs.eq(0)), en: $exs.eq(1).text().trim() });
+      }
     }
   });
   return examples;

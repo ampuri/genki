@@ -24,20 +24,30 @@ mark {
   padding: 0 1px;
 }
 
-/* ── Accent color from theme-genki2.css ── */
-.main-color {
-  color: #66BB55;
-}
+/* ── Per-book accent color via CSS variable ──
+   Default (Genki I): orange #FF9933
+   Genki II override: green #66BB55 (set on container via PointCard)
+*/
+:root { --accent: #FF9933; }
+
+.main-color { color: var(--accent); }
 
 .t-green { color: #080; }
 .t-blue  { color: #09F; }
 .center  { text-align: center; }
 
-/* ── Outer PointCard grammar-table ──
-   Mirrors: .grammar-index .table.grammar-table td
-            .grammar-index .table.grammar-table > tbody > tr > td:first-child
-            .grammar-index .table.grammar-table > tbody > tr > td:nth-child(2)
-*/
+/* ── box-color: inline bordered box for formula/pattern display ── */
+.box-color {
+  display: inline-block;
+  border: 2px solid var(--accent);
+  padding: 3px;
+  margin: 3px;
+}
+.box-color.spaced { margin: 10px 3px; }
+.box-color.bg { background: #FFF; }
+.box-color.inline { display: inline; padding: 0 3px; }
+
+/* ── Outer PointCard grammar-table ── */
 .grammar-table {
   border-collapse: collapse;
   width: 100%;
@@ -48,10 +58,10 @@ mark {
   font-size: 15px;
   border: 1px solid #DDD;
   vertical-align: top;
-  padding: 6px 8px;
+  padding: 3px;
 }
 
-/* label column: width 60px, bold, centered, gray bg */
+/* label column */
 .grammar-table > tbody > tr > td:first-child {
   width: 60px;
   min-width: 60px;
@@ -62,15 +72,12 @@ mark {
   white-space: nowrap;
 }
 
-/* content column: light gray bg */
+/* content column */
 .grammar-table > tbody > tr > td:nth-child(2) {
   background: #F7F7F7;
 }
 
-/* ── Inner tables (inside explanation HTML) ──
-   Source: .table td { background:#FFF; border:1px solid #DDD; padding:3px; }
-   Source: .grammar-index .table td { background:#F7F7F7 }
-*/
+/* ── Inner tables (inside explanation HTML) ── */
 .table {
   border-collapse: collapse;
   width: 100%;
@@ -80,12 +87,11 @@ mark {
 .table td,
 .table th {
   border: 1px solid #DDD;
-  padding: 4px 6px;
+  padding: 3px;
   background: #F7F7F7;
   vertical-align: middle;
 }
 
-/* table-head row: bold, slightly darker bg, green label text */
 .table-head td,
 .table-head th {
   font-size: 14px;
@@ -93,23 +99,18 @@ mark {
   background: #EEE;
 }
 
-/* ── Example boxes ──
-   Source: border:1px solid #CCC; border-left:3px solid #6B5; margin:10px 5px; padding:5px; background:#FFF;
-*/
+/* ── Example boxes ── */
 .example {
   border: 1px solid #CCC;
-  border-left: 3px solid #66BB55;
+  border-left: 3px solid var(--accent);
   margin: 10px 5px;
   padding: 5px;
   background: #FFF;
 }
 
-/* ── columns-2-in: side-by-side example pairs ──
-   Source: .grammar-index .columns-2-in > div.example { display:inline-block; width:47%; margin:10px 5px; vertical-align:top; }
-*/
+/* ── columns-2-in: side-by-side example pairs ── */
 .columns-2-in {
-  display: flex;
-  gap: 0;
+  display: block;
 }
 
 .columns-2-in > .example {
@@ -120,7 +121,7 @@ mark {
   box-sizing: border-box;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 1000px) {
   .columns-2-in > .example {
     display: block;
     width: auto;
@@ -130,9 +131,15 @@ mark {
 
 /* ── Lists inside grammar table cells ── */
 .grammar-table td ul,
+.table td ul {
+  list-style-type: disc;
+  margin: 0;
+  padding-left: 30px;
+}
+
 .grammar-table td ol,
-.table td ul,
 .table td ol {
+  list-style-type: decimal;
   margin: 0;
   padding-left: 30px;
 }
