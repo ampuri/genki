@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* ── Base: match source site font/color ── */
+body {
+  font-family: 'メイリオ', 'Meiryo', 'Osaka', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'Noto Sans JP', Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+/* ── Furigana ── */
 ruby rt {
   font-size: 0.6em;
   line-height: 1;
@@ -9,76 +17,137 @@ ruby rt {
   display: none;
 }
 
+/* ── Search highlight ── */
 mark {
   background-color: #fde047;
   border-radius: 2px;
   padding: 0 1px;
 }
 
-/* ── outer PointCard grammar-table ── */
-.grammar-table td {
-  vertical-align: top;
-  padding: 0.4rem 0.6rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.grammar-table td:first-child {
-  white-space: nowrap;
-  font-size: 0.85rem;
-  color: #6b7280;
-  min-width: 5rem;
-}
-
-/* ── source-site classes used inside HTML fields ── */
-
-/* Green accent color matching the original */
+/* ── Accent color from theme-genki2.css ── */
 .main-color {
-  color: #3a9142;
+  color: #66BB55;
 }
 
-/* Inner tables (conjugation charts inside explanations) */
+.t-green { color: #080; }
+.t-blue  { color: #09F; }
+.center  { text-align: center; }
+
+/* ── Outer PointCard grammar-table ──
+   Mirrors: .grammar-index .table.grammar-table td
+            .grammar-index .table.grammar-table > tbody > tr > td:first-child
+            .grammar-index .table.grammar-table > tbody > tr > td:nth-child(2)
+*/
+.grammar-table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #DDD;
+}
+
+.grammar-table > tbody > tr > td {
+  font-size: 15px;
+  border: 1px solid #DDD;
+  vertical-align: top;
+  padding: 6px 8px;
+}
+
+/* label column: width 60px, bold, centered, gray bg */
+.grammar-table > tbody > tr > td:first-child {
+  width: 60px;
+  min-width: 60px;
+  font-weight: bold;
+  text-align: center;
+  background: #EEE;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* content column: light gray bg */
+.grammar-table > tbody > tr > td:nth-child(2) {
+  background: #F7F7F7;
+}
+
+/* ── Inner tables (inside explanation HTML) ──
+   Source: .table td { background:#FFF; border:1px solid #DDD; padding:3px; }
+   Source: .grammar-index .table td { background:#F7F7F7 }
+*/
 .table {
   border-collapse: collapse;
   width: 100%;
-  margin: 0.5rem 0;
-  font-size: 0.875rem;
+  margin: 10px 0;
 }
 
 .table td,
 .table th {
-  border: 1px solid #d1d5db;
-  padding: 0.3rem 0.6rem;
+  border: 1px solid #DDD;
+  padding: 4px 6px;
+  background: #F7F7F7;
   vertical-align: middle;
 }
 
-/* Green header rows */
+/* table-head row: bold, slightly darker bg, green label text */
 .table-head td,
 .table-head th {
-  background-color: #dcf0de;
-  color: #1e5c24;
-  font-weight: 600;
-  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  background: #EEE;
 }
 
-.center {
-  text-align: center;
+/* ── Example boxes ──
+   Source: border:1px solid #CCC; border-left:3px solid #6B5; margin:10px 5px; padding:5px; background:#FFF;
+*/
+.example {
+  border: 1px solid #CCC;
+  border-left: 3px solid #66BB55;
+  margin: 10px 5px;
+  padding: 5px;
+  background: #FFF;
 }
 
-/* Example columns inside explanation (columns-2-in layout) */
+/* ── columns-2-in: side-by-side example pairs ──
+   Source: .grammar-index .columns-2-in > div.example { display:inline-block; width:47%; margin:10px 5px; vertical-align:top; }
+*/
 .columns-2-in {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  align-items: start;
+  display: flex;
+  gap: 0;
 }
 
-/* Prose spacing for lists / paragraphs inside HTML fields */
+.columns-2-in > .example {
+  display: inline-block;
+  width: 47%;
+  margin: 10px 5px;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .columns-2-in > .example {
+    display: block;
+    width: auto;
+    margin: 5px 0;
+  }
+}
+
+/* ── Lists inside grammar table cells ── */
 .grammar-table td ul,
-.grammar-table td ol {
+.grammar-table td ol,
+.table td ul,
+.table td ol {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: 30px;
 }
 
-.grammar-table td li {
-  margin-bottom: 0.15rem;
+.grammar-table td li,
+.table td li {
+  margin-bottom: 5px;
+}
+
+/* ── Supplemental / practice lists ── */
+.grammar-table .ex-list li,
+.grammar-table .sup-list li {
+  margin-bottom: 0;
+}
+
+.grammar-table .sup-list ul {
+  margin-bottom: 5px;
 }
