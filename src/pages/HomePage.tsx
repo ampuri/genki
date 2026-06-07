@@ -27,7 +27,10 @@ export default function HomePage() {
 
   return (
     <div>
-      <div className="sticky top-16 z-40 bg-[var(--bg)] py-2 -mt-4 sm:-mt-6 -mx-3 px-3 sm:-mx-4 sm:px-4 border-b border-[var(--border)] mb-4">
+      <div
+        className="sticky z-40 bg-[var(--bg)] py-2 -mt-4 sm:-mt-6 -mx-3 px-3 sm:-mx-4 sm:px-4 border-b border-[var(--border)] mb-4"
+        style={{ top: 'calc(3.25rem + max(0.75rem, env(safe-area-inset-top)))' }}
+      >
         <SearchBox value={query} onChange={setQuery} />
         <div className="mt-2">
           <ViewBar activeView={activeView} onChange={setActiveView} />
