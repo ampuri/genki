@@ -134,20 +134,20 @@ export default function App() {
         <HomePage />
       </main>
 
-      {/* ── Point overlay (stacked view, sits under the shared header) ── */}
+      {/* ── Point overlay (stacked view) ──
+          Sits below the static header so its scroll container — and thus its
+          scrollbar — starts under the header rather than running behind it. */}
       <div
         ref={overlayScrollRef}
-        className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-[var(--bg)] transition-transform duration-[280ms] ease-out"
+        className="fixed left-0 right-0 bottom-0 z-40 overflow-y-auto overscroll-contain bg-[var(--bg)] transition-transform duration-[280ms] ease-out"
         style={{
+          top: 'calc(3.25rem + max(0.75rem, env(safe-area-inset-top)))',
           transform: active ? 'translateX(0)' : 'translateX(100%)',
           visibility: shown ? 'visible' : 'hidden',
         }}
         aria-hidden={!active}
       >
-        <div
-          className="max-w-4xl mx-auto w-full px-3 sm:px-4 pb-4 sm:pb-6"
-          style={{ paddingTop: 'calc(3.25rem + max(0.75rem, env(safe-area-inset-top)) + 1rem)' }}
-        >
+        <div className="max-w-4xl mx-auto w-full px-3 sm:px-4 py-4 sm:py-6">
           {shown?.kind === 'point' && <PointPage id={shown.id} />}
           {shown?.kind === 'notfound' && <NotFound />}
         </div>

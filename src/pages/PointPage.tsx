@@ -30,6 +30,7 @@ export default function PointPage({ id: idProp }: { id?: string } = {}) {
         {prev ? (
           <Link
             to={`/point/${prev.id}`}
+            replace
             className="flex flex-col gap-0.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-3 hover:bg-[var(--hover)] active:bg-[var(--active)] transition-colors touch-manipulation min-h-[60px] justify-center"
           >
             <span className="text-xs text-[var(--ink-faint)]">← Previous</span>
@@ -42,6 +43,7 @@ export default function PointPage({ id: idProp }: { id?: string } = {}) {
         {next ? (
           <Link
             to={`/point/${next.id}`}
+            replace
             className="flex flex-col gap-0.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-3 hover:bg-[var(--hover)] active:bg-[var(--active)] transition-colors touch-manipulation min-h-[60px] justify-center text-right"
           >
             <span className="text-xs text-[var(--ink-faint)]">Next →</span>

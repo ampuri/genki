@@ -131,6 +131,7 @@ function BookSection({
                   <li key={pt.id} className={i > 0 ? 'border-t border-[var(--border)]' : ''}>
                     <Link
                       to={`/point/${pt.id}`}
+                      replace={!!currentPointId}
                       onClick={onClose}
                       data-point-id={pt.id}
                       className="flex items-center min-h-[44px] pl-3 pr-2 py-1.5 text-sm transition-colors hover:bg-[var(--hover)] active:bg-[var(--active)]"
