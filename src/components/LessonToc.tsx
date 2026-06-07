@@ -6,14 +6,26 @@ import { accentVar, bookColorVar } from '../lib/accent';
 
 const lessonGroups = getLessonGroups();
 
-export default function LessonToc() {
-  const genkiI = lessonGroups.filter(g => g.book === 'Genki I');
-  const genkiII = lessonGroups.filter(g => g.book === 'Genki II');
+export default function LessonToc({ view }: { view?: string | null }) {
+  const filtered = view
+    ? lessonGroups
+        .map(g => ({ ...g, points: g.points.filter(p => p.views.includes(view)) }))
+        .filter(g => g.points.length > 0)
+    : lessonGroups;
+
+  const genkiI = filtered.filter(g => g.book === 'Genki I');
+  const genkiII = filtered.filter(g => g.book === 'Genki II');
+
+  if (filtered.length === 0) {
+    return (
+      <p className="text-center text-[var(--ink-soft)] py-12">No grammar points in this view.</p>
+    );
+  }
 
   return (
     <div className="space-y-9">
-      <BookSection title="Genki I" groups={genkiI} />
-      <BookSection title="Genki II" groups={genkiII} />
+      {genkiI.length > 0 && <BookSection title="Genki I" groups={genkiI} />}
+      {genkiII.length > 0 && <BookSection title="Genki II" groups={genkiII} />}
     </div>
   );
 }

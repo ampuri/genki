@@ -68,7 +68,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-[var(--bg)] text-[var(--ink)]">
       {/* ── Header ── */}
       <header
-        className="flex items-center gap-3 sticky top-0 z-50 bg-[var(--header-bg)] text-[var(--header-ink)] border-b border-[var(--header-border)]"
+        className="flex items-center gap-3 sticky top-0 z-50 bg-[var(--header-bg)] text-[var(--header-ink)] shadow-[0_1px_0_0_var(--header-border)]"
         style={{
           paddingTop: 'max(0.75rem, env(safe-area-inset-top))',
           paddingBottom: '0.75rem',

@@ -21,6 +21,7 @@ export interface GrammarPoint {
   examples: Example[];
   practice: LinkRef[];
   searchBlob: string;
+  views: string[];
 }
 
 export interface LessonGroup {
