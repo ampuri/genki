@@ -3,8 +3,6 @@ import { getById, allPoints } from '../lib/data';
 import { stripTitlePlain } from '../lib/title';
 import PointCard from '../components/PointCard';
 
-const ACCENT = '#66BB55'; // used for 404 link and prev/next
-
 export default function PointPage() {
   const { id } = useParams<{ id: string }>();
   const point = id ? getById(id) : undefined;
@@ -16,8 +14,8 @@ export default function PointPage() {
   if (!point) {
     return (
       <div className="text-center py-16">
-        <p className="text-gray-500 mb-4">Grammar point not found: {id}</p>
-        <Link to="/" className="underline" style={{ color: ACCENT }}>Back to home</Link>
+        <p className="text-[var(--ink-soft)] mb-4">Grammar point not found: {id}</p>
+        <Link to="/" className="underline underline-offset-2 text-[var(--brand-ink)]">Back to home</Link>
       </div>
     );
   }
@@ -27,14 +25,14 @@ export default function PointPage() {
       <PointCard point={point} />
 
       {/* Prev / Next navigation */}
-      <div className="mt-6 grid grid-cols-2 gap-3">
+      <div className="mt-8 grid grid-cols-2 gap-3">
         {prev ? (
           <Link
             to={`/point/${prev.id}`}
-            className="flex flex-col gap-0.5 border border-gray-200 rounded-xl px-3 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation min-h-[60px] justify-center"
+            className="flex flex-col gap-0.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-3 hover:bg-[var(--hover)] active:bg-[var(--active)] transition-colors touch-manipulation min-h-[60px] justify-center"
           >
-            <span className="text-xs text-gray-400">← Previous</span>
-            <span className="text-sm text-gray-700 leading-snug line-clamp-2">{stripTitlePlain(prev.titlePlain)}</span>
+            <span className="text-xs text-[var(--ink-faint)]">← Previous</span>
+            <span className="text-sm text-[var(--ink)] leading-snug line-clamp-2">{stripTitlePlain(prev.titlePlain)}</span>
           </Link>
         ) : (
           <div />
@@ -43,10 +41,10 @@ export default function PointPage() {
         {next ? (
           <Link
             to={`/point/${next.id}`}
-            className="flex flex-col gap-0.5 border border-gray-200 rounded-xl px-3 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation min-h-[60px] justify-center text-right"
+            className="flex flex-col gap-0.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-3 hover:bg-[var(--hover)] active:bg-[var(--active)] transition-colors touch-manipulation min-h-[60px] justify-center text-right"
           >
-            <span className="text-xs text-gray-400">Next →</span>
-            <span className="text-sm text-gray-700 leading-snug line-clamp-2">{stripTitlePlain(next.titlePlain)}</span>
+            <span className="text-xs text-[var(--ink-faint)]">Next →</span>
+            <span className="text-sm text-[var(--ink)] leading-snug line-clamp-2">{stripTitlePlain(next.titlePlain)}</span>
           </Link>
         ) : (
           <div />

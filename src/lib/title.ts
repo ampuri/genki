@@ -15,3 +15,9 @@ export function stripTitleHtml(s: string): string {
 export function stripHonbunDialogue(html: string): string {
   return html.replace(/【[^】]+】/g, '').trim();
 }
+
+/** The Genki index number for a point ("1", "12", or "•" if none). */
+export function leadingNumber(titlePlain: string): string {
+  const m = titlePlain.match(/^(?:表現ノート)?\s*(\d+)\./);
+  return m ? m[1] : '•';
+}

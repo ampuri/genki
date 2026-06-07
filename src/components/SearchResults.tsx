@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
 import { highlight, snippetAround } from '../lib/highlight';
 import { stripTitlePlain } from '../lib/title';
+import { accentVar, accentSoftVar } from '../lib/accent';
 import type { SearchResult } from '../lib/search';
-
-const ACCENT = '#66BB55';
-const EXPR_COLOR = '#3CAEA3';
 
 interface Props {
   results: SearchResult[];
@@ -13,36 +11,39 @@ interface Props {
 
 export default function SearchResults({ results, query }: Props) {
   if (results.length === 0) {
-    return <p className="text-gray-500 text-sm">No matches found.</p>;
+    return <p className="text-[var(--ink-soft)] text-sm">No matches found.</p>;
   }
 
   return (
     <div>
-      <p className="text-sm text-gray-500 mb-3">{results.length} match{results.length !== 1 ? 'es' : ''}</p>
-      <ul className="space-y-2">
+      <p className="text-sm text-[var(--ink-faint)] mb-3">
+        {results.length} match{results.length !== 1 ? 'es' : ''}
+      </p>
+      <ul className="space-y-2.5">
         {results.map(({ point }) => {
-          const color = point.isExpressionNote ? EXPR_COLOR : ACCENT;
+          const accent = accentVar(point);
+          const soft = accentSoftVar(point);
           const snippet = snippetAround(point.searchBlob, query, 160);
 
           return (
             <li key={point.id}>
               <Link
                 to={`/point/${point.id}`}
-                className="block border border-gray-200 rounded-xl px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation min-h-[60px]"
-                style={{ borderLeftWidth: '3px', borderLeftColor: color }}
+                className="block rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 hover:bg-[var(--hover)] active:bg-[var(--active)] transition-colors touch-manipulation"
+                style={point.isExpressionNote ? undefined : { borderLeftWidth: '3px', borderLeftColor: accent }}
               >
                 <div className="flex flex-wrap items-baseline gap-2 mb-1">
-                  <span className="font-semibold text-sm" style={{ color }}>
+                  <span className="font-semibold text-[15px] text-[var(--ink)]">
                     {highlight(stripTitlePlain(point.titlePlain), query)}
                   </span>
                   <span
-                    className="text-xs px-1.5 py-0.5 rounded font-medium"
-                    style={{ backgroundColor: `${color}20`, color }}
+                    className="text-[11px] px-1.5 py-0.5 rounded font-bold"
+                    style={{ backgroundColor: soft, color: accent }}
                   >
-                    {point.book === 'Genki II' ? 'II' : 'I'} L{point.lesson}
+                    {point.book === 'Genki II' ? 'II' : 'I'} · L{point.lesson}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
                   {highlight(snippet, query)}
                 </p>
               </Link>

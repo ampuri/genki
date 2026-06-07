@@ -6,7 +6,7 @@ export function highlight(text: string, query: string): React.ReactNode[] {
   const re = new RegExp(`(${escaped})`, 'gi');
   const parts = text.split(re);
   return parts.map((part, i) =>
-    re.test(part) ? <mark key={i} className="bg-yellow-200 text-inherit rounded-sm">{part}</mark> : part
+    re.test(part) ? <mark key={i}>{part}</mark> : part
   );
 }
 

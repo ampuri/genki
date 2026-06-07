@@ -1,12 +1,95 @@
 @import "tailwindcss";
 
-/* ── Base: mobile-first font/color ── */
+/* Drive dark mode off a [data-theme="dark"] attribute on <html> */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ──────────────────────────────────────────────────────────
+   Design tokens
+   Color is reserved for emphasis (accents, marks, formulas).
+   Body copy stays high-contrast ink so nothing reads "faint".
+   ────────────────────────────────────────────────────────── */
+:root {
+  --bg:          #fbfbf9;   /* warm paper */
+  --surface:     #ffffff;
+  --surface-2:   #f4f5f0;   /* quiet panels / content cells */
+  --surface-3:   #eaece3;   /* table heads */
+  --border:      #e5e7df;
+  --border-strong:#d4d7cc;
+  --hover:       #f2f3ed;
+  --active:      #e8eae1;
+
+  --ink:         #1e2420;   /* primary text */
+  --ink-soft:    #586059;   /* secondary */
+  --ink-faint:   #889086;   /* tertiary / meta */
+
+  --brand:       #338a3e;   /* app chrome: header / toggles / ring */
+  --brand-ink:   #2f7d35;   /* generic green links (404 etc.) */
+  --brand-soft:  #e9f4ea;
+
+  /* Per-book identity. Genki I = orange, Genki II = green. */
+  --book1:       #c2670f;   /* Genki I — orange */
+  --book1-soft:  #fbeede;
+  --book2:       #2f7d35;   /* Genki II — green */
+  --book2-soft:  #e9f4ea;
+
+  --blue-ink:    #0a6ebd;   /* .t-blue content */
+
+  --header-bg:   var(--brand);
+  --header-ink:  #ffffff;
+  --header-border: transparent;
+
+  --mark-bg:     #ffe478;
+  --mark-ink:    #3a2e00;
+
+  --accent: var(--brand-ink);   /* per-point overridable */
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg:          #0f1311;
+  --surface:     #171c18;
+  --surface-2:   #1d231e;
+  --surface-3:   #232b24;
+  --border:      #2a322b;
+  --border-strong:#3a443b;
+  --hover:       #1f261f;
+  --active:      #283029;
+
+  --ink:         #e7ebe4;
+  --ink-soft:    #a3aaa0;
+  --ink-faint:   #727a70;
+
+  --brand:       #4caf50;
+  --brand-ink:   #7fd089;
+  --brand-soft:  #1a2a1c;
+
+  --book1:       #e88c3c;   /* Genki I — orange */
+  --book1-soft:  #2a1f12;
+  --book2:       #7fd089;   /* Genki II — green */
+  --book2-soft:  #1a2a1c;
+
+  --blue-ink:    #5cb3f0;
+
+  --header-bg:   #141815;
+  --header-ink:  #e7ebe4;
+  --header-border: #232b24;
+
+  --mark-bg:     #5a4a12;
+  --mark-ink:    #ffe9a8;
+
+  color-scheme: dark;
+}
+
+/* ── Base ── */
+html { background: var(--bg); }
 body {
   font-family: 'メイリオ', 'Meiryo', 'Osaka', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'Noto Sans JP', Arial, sans-serif;
   font-size: 16px;
-  color: #333;
+  background: var(--bg);
+  color: var(--ink);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  transition: background-color .25s ease, color .25s ease;
 }
 
 @media (min-width: 640px) {
@@ -17,6 +100,8 @@ body {
 a, button, [role="button"], input, select, label {
   touch-action: manipulation;
 }
+
+::selection { background: var(--brand-soft); }
 
 /* ── Furigana ── */
 ruby rt {
@@ -30,92 +115,151 @@ ruby rt {
 
 /* ── Search highlight ── */
 mark {
-  background-color: #fde047;
+  background-color: var(--mark-bg);
+  color: var(--mark-ink);
   border-radius: 2px;
   padding: 0 1px;
 }
 
-/* ── Per-book accent color via CSS variable ──
-   Default (Genki I): orange #FF9933
-   Genki II override: green #66BB55 (set on container via PointCard)
-*/
-:root { --accent: #FF9933; }
-
+/* ── Content-HTML helpers (used inside explanation markup) ── */
 .main-color { color: var(--accent); }
-
-.t-green { color: #080; }
-.t-blue  { color: #09F; }
+.t-green { color: var(--brand-ink); }
+.t-blue  { color: var(--blue-ink); }
 .center  { text-align: center; }
 
 /* ── box-color: inline bordered box for formula/pattern display ── */
 .box-color {
   display: inline-block;
-  border: 2px solid var(--accent);
-  padding: 3px;
+  border: 1.5px solid var(--accent);
+  border-radius: 6px;
+  padding: 2px 7px;
   margin: 3px;
+  background: var(--surface);
 }
 .box-color.spaced { margin: 10px 3px; }
-.box-color.bg { background: #FFF; }
-.box-color.inline { display: inline; padding: 0 3px; }
+.box-color.bg { background: var(--surface); }
+.box-color.inline { display: inline; padding: 0 4px; border-radius: 4px; }
 
-/* ── Outer PointCard grammar-table ── */
-.grammar-table {
-  border-collapse: collapse;
-  width: 100%;
-  border: 1px solid #DDD;
-  table-layout: fixed;
+/* ──────────────────────────────────────────────────────────
+   Point page: labeled sections (replaces the old grammar table)
+   ────────────────────────────────────────────────────────── */
+.pt-section { margin-top: 20px; }
+
+.pt-head {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-bottom: 9px;
+}
+.pt-head .jp {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.pt-head .en {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
-.grammar-table > tbody > tr > td {
+/* Quiet content panel — keeps the "nice cell" feel as a section body */
+.cell {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 13px 15px;
   font-size: 15px;
-  border: 1px solid #DDD;
-  vertical-align: top;
-  padding: 6px;
+  line-height: 1.65;
 }
-
 @media (max-width: 639px) {
-  .grammar-table > tbody > tr > td {
-    font-size: 14px;
-    padding: 5px 4px;
-  }
+  .cell { font-size: 14px; padding: 12px 13px; }
+}
+.cell ul { list-style: disc;    margin: 0; padding-left: 22px; }
+.cell ol { list-style: decimal; margin: 0; padding-left: 22px; }
+.cell li { margin-bottom: 6px; }
+.cell li:last-child { margin-bottom: 0; }
+.cell > :first-child { margin-top: 0; }
+.cell > :last-child  { margin-bottom: 0; }
+
+/* Supplemental link groups */
+.sup-group + .sup-group { margin-top: 12px; }
+.sup-group > .label {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 3px;
 }
 
-/* label column */
-.grammar-table > tbody > tr > td:first-child {
-  width: 52px;
-  min-width: 52px;
-  font-weight: bold;
-  text-align: center;
-  background: #EEE;
-  vertical-align: middle;
-  white-space: nowrap;
+/* Pattern chips — grammar formulas */
+.pattern-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.pattern-list > li {
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  background: var(--surface);
+  border-radius: 9px;
+  padding: 7px 13px;
+  font-weight: 600;
+  font-size: 14.5px;
+  line-height: 1.35;
 }
 
-/* content column */
-.grammar-table > tbody > tr > td:nth-child(2) {
-  background: #F7F7F7;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  min-width: 0;
+/* Example cards — bilingual pairs */
+.ex-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 9px;
+  counter-reset: ex;
+}
+.ex-list > li {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  padding: 11px 13px 11px 15px;
+}
+.ex-list > li::before {
+  counter-increment: ex;
+  content: counter(ex);
+  position: absolute;
+  top: 9px; right: 11px;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+  opacity: .65;
+}
+.ex-jp { font-size: 15px; line-height: 1.6; padding-right: 16px; }
+.ex-en { color: var(--ink-soft); font-size: 13.5px; line-height: 1.55; margin-top: 4px; }
+@media (max-width: 639px) {
+  .ex-jp { font-size: 14.5px; }
+  .ex-en { font-size: 13px; }
 }
 
 /* ── Inner tables (inside explanation HTML) ── */
 .table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin: 8px 0;
+  border-radius: 8px;
 }
 
 .table {
   border-collapse: collapse;
   width: 100%;
-  margin: 10px 0;
+  margin: 4px 0;
 }
 
 .table td,
 .table th {
-  border: 1px solid #DDD;
-  padding: 3px;
-  background: #F7F7F7;
+  border: 1px solid var(--border);
+  padding: 5px 7px;
+  background: var(--surface);
   vertical-align: middle;
 }
 
@@ -123,23 +267,19 @@ mark {
 .table-head th {
   font-size: 14px;
   font-weight: bold;
-  background: #EEE;
+  background: var(--surface-3);
 }
 
-/* ── Example boxes ── */
+/* ── Example layout helper (when embedded in explanation HTML) ── */
 .example {
-  border: 1px solid #CCC;
+  border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
-  margin: 8px 3px;
-  padding: 6px 8px;
-  background: #FFF;
+  border-radius: 8px;
+  margin: 8px 0;
+  padding: 9px 12px;
+  background: var(--surface);
 }
-
-/* ── columns-2-in: side-by-side example pairs ── */
-.columns-2-in {
-  display: block;
-}
-
+.columns-2-in { display: block; }
 .columns-2-in > .example {
   display: inline-block;
   width: 47%;
@@ -147,41 +287,6 @@ mark {
   vertical-align: top;
   box-sizing: border-box;
 }
-
 @media (max-width: 640px) {
-  .columns-2-in > .example {
-    display: block;
-    width: auto;
-    margin: 6px 0;
-  }
-}
-
-/* ── Lists inside grammar table cells ── */
-.grammar-table td ul,
-.table td ul {
-  list-style-type: disc;
-  margin: 0;
-  padding-left: 24px;
-}
-
-.grammar-table td ol,
-.table td ol {
-  list-style-type: decimal;
-  margin: 0;
-  padding-left: 24px;
-}
-
-.grammar-table td li,
-.table td li {
-  margin-bottom: 5px;
-}
-
-/* ── Supplemental / practice lists ── */
-.grammar-table .ex-list li,
-.grammar-table .sup-list li {
-  margin-bottom: 0;
-}
-
-.grammar-table .sup-list ul {
-  margin-bottom: 5px;
+  .columns-2-in > .example { display: block; width: auto; margin: 6px 0; }
 }
