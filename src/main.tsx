@@ -3,9 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import App from './App';
-import HomePage from './pages/HomePage';
-import PointPage from './pages/PointPage';
-import NotFound from './pages/NotFound';
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -17,11 +14,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HashRouter>
       <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={<HomePage />} />
-          <Route path="point/:id" element={<PointPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
+        <Route path="/*" element={<App />} />
       </Routes>
     </HashRouter>
   </StrictMode>,

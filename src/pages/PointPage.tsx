@@ -3,8 +3,9 @@ import { getById, allPoints } from '../lib/data';
 import { stripTitlePlain } from '../lib/title';
 import PointCard from '../components/PointCard';
 
-export default function PointPage() {
-  const { id } = useParams<{ id: string }>();
+export default function PointPage({ id: idProp }: { id?: string } = {}) {
+  const params = useParams<{ id: string }>();
+  const id = idProp ?? params.id;
   const point = id ? getById(id) : undefined;
 
   const idx = point ? allPoints.findIndex(p => p.id === id) : -1;

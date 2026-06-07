@@ -1,8 +1,13 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import SideNav from './components/SideNav';
+import HomePage from './pages/HomePage';
+import PointPage from './pages/PointPage';
+import NotFound from './pages/NotFound';
 
 type Theme = 'light' | 'dark';
+
+type Overlay = { kind: 'point'; id: string } | { kind: 'notfound' } | null;
 
 function initialTheme(): Theme {
   const saved = localStorage.getItem('theme');
@@ -17,25 +22,58 @@ export default function App() {
   const [theme, setTheme] = useState<Theme>(initialTheme);
   const [navOpen, setNavOpen] = useState(false);
   const location = useLocation();
-  const homeScrollRef = useRef(0);
 
-  // Take over scroll restoration so we control it per-route.
+  const pointMatch = location.pathname.match(/^\/point\/(.+)$/);
+  const currentPointId = pointMatch ? pointMatch[1] : undefined;
+  const isUnknown = location.pathname !== '/' && !pointMatch;
+  const overlayRoute = location.pathname !== '/';
+
+  // The overlay is a stacked view layered over the always-mounted HomePage.
+  // `shown` is what it renders; it lingers during the slide-out so the panel
+  // doesn't blank mid-animation. `active` drives the slide transform.
+  const [shown, setShown] = useState<Overlay>(() =>
+    currentPointId ? { kind: 'point', id: currentPointId } : isUnknown ? { kind: 'notfound' } : null
+  );
+  const [active, setActive] = useState(overlayRoute);
+  const overlayScrollRef = useRef<HTMLDivElement>(null);
+
+  // Take over scroll restoration; we never move the window on navigation now,
+  // so the homepage simply stays where the user left it behind the overlay.
   useEffect(() => {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   }, []);
 
-  // Remember the homepage scroll position while we're on it.
+  // Drive the overlay enter/exit animation from the route.
   useEffect(() => {
-    if (location.pathname !== '/') return;
-    const onScroll = () => { homeScrollRef.current = window.scrollY; };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [location.pathname]);
+    if (currentPointId) {
+      setShown({ kind: 'point', id: currentPointId });
+      const r = requestAnimationFrame(() => setActive(true));
+      return () => cancelAnimationFrame(r);
+    }
+    if (isUnknown) {
+      setShown({ kind: 'notfound' });
+      const r = requestAnimationFrame(() => setActive(true));
+      return () => cancelAnimationFrame(r);
+    }
+    setActive(false);
+    const t = setTimeout(() => setShown(null), 280);
+    return () => clearTimeout(t);
+  }, [currentPointId, isUnknown]);
 
-  // Point pages always open at the top; the homepage restores where you left it.
+  // Each point opens at the top of its own scroll container.
   useLayoutEffect(() => {
-    window.scrollTo(0, location.pathname === '/' ? homeScrollRef.current : 0);
-  }, [location.pathname]);
+    if (shown?.kind === 'point' && overlayScrollRef.current) {
+      overlayScrollRef.current.scrollTop = 0;
+    }
+  }, [shown?.kind === 'point' ? shown.id : null]);
+
+  // Lock the page behind the overlay so touch scrolling doesn't bleed through
+  // and the homepage scroll position is held intact.
+  useEffect(() => {
+    if (!overlayRoute) return;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [overlayRoute]);
 
   useEffect(() => {
     document.body.classList.toggle('furigana-hidden', furiganaHidden);
@@ -60,9 +98,6 @@ export default function App() {
       return () => window.removeEventListener('popstate', close);
     }
   }, [navOpen]);
-
-  const match = location.pathname.match(/^\/point\/(.+)$/);
-  const currentPointId = match ? match[1] : undefined;
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--bg)] text-[var(--ink)]">
@@ -94,10 +129,29 @@ export default function App() {
         </Link>
       </header>
 
-      {/* ── Main content ── */}
+      {/* ── Main content (always mounted) ── */}
       <main className="flex-1 max-w-4xl mx-auto w-full px-3 sm:px-4 py-4 sm:py-6">
-        <Outlet />
+        <HomePage />
       </main>
+
+      {/* ── Point overlay (stacked view, sits under the shared header) ── */}
+      <div
+        ref={overlayScrollRef}
+        className="fixed inset-0 z-40 overflow-y-auto overscroll-contain bg-[var(--bg)] transition-transform duration-[280ms] ease-out"
+        style={{
+          transform: active ? 'translateX(0)' : 'translateX(100%)',
+          visibility: shown ? 'visible' : 'hidden',
+        }}
+        aria-hidden={!active}
+      >
+        <div
+          className="max-w-4xl mx-auto w-full px-3 sm:px-4 pb-4 sm:pb-6"
+          style={{ paddingTop: 'calc(3.25rem + max(0.75rem, env(safe-area-inset-top)) + 1rem)' }}
+        >
+          {shown?.kind === 'point' && <PointPage id={shown.id} />}
+          {shown?.kind === 'notfound' && <NotFound />}
+        </div>
+      </div>
 
       {/* ── Backdrop ── */}
       {navOpen && (
