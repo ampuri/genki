@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+ruby rt {
+  font-size: 0.6em;
+  line-height: 1;
+}
+
+.furigana-hidden rt {
+  display: none;
+}
+
+mark {
+  background-color: #fde047;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.grammar-table td {
+  vertical-align: top;
+  padding: 0.4rem 0.6rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.grammar-table td:first-child {
+  white-space: nowrap;
+  font-size: 0.85rem;
+  color: #6b7280;
+  min-width: 5rem;
+}
