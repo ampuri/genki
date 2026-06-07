@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Html } from '../lib/ruby';
 import { highlight, snippetAround } from '../lib/highlight';
-import { stripTitleHtml } from '../lib/title';
+import { stripTitlePlain } from '../lib/title';
 import type { SearchResult } from '../lib/search';
 
 const ACCENT = '#66BB55';
@@ -34,7 +33,7 @@ export default function SearchResults({ results, query }: Props) {
               >
                 <div className="flex flex-wrap items-baseline gap-2 mb-1">
                   <span className="font-semibold text-sm" style={{ color }}>
-                    <Html html={stripTitleHtml(point.title)} />
+                    {highlight(stripTitlePlain(point.titlePlain), query)}
                   </span>
                   <span
                     className="text-xs px-1.5 py-0.5 rounded font-medium"

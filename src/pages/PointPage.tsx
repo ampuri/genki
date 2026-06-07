@@ -3,7 +3,7 @@ import { getById, allPoints } from '../lib/data';
 import { stripTitlePlain } from '../lib/title';
 import PointCard from '../components/PointCard';
 
-const ACCENT = '#66BB55';
+const ACCENT = '#66BB55'; // used for 404 link and prev/next
 
 export default function PointPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,18 +24,6 @@ export default function PointPage() {
 
   return (
     <div>
-      {/* Back link */}
-      <div className="mb-3">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1 text-sm hover:underline touch-manipulation"
-          style={{ color: ACCENT }}
-        >
-          <span>←</span>
-          <span>All Grammar Points</span>
-        </Link>
-      </div>
-
       <PointCard point={point} />
 
       {/* Prev / Next navigation */}
