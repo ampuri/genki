@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { getLessonGroups } from '../lib/data';
 import { Html } from '../lib/ruby';
+import { stripTitleHtml } from '../lib/title';
 
-const GENKI1 = '#FF9933';
-const GENKI2 = '#66BB55';
+const ACCENT = '#66BB55';
+const EXPR_COLOR = '#3CAEA3';
 const lessonGroups = getLessonGroups();
 
 export default function LessonToc() {
@@ -12,18 +13,18 @@ export default function LessonToc() {
 
   return (
     <div className="space-y-8">
-      <BookSection title="Genki I" groups={genkiI} accent={GENKI1} />
-      <BookSection title="Genki II" groups={genkiII} accent={GENKI2} />
+      <BookSection title="Genki I" groups={genkiI} />
+      <BookSection title="Genki II" groups={genkiII} />
     </div>
   );
 }
 
-function BookSection({ title, groups, accent }: { title: string; groups: typeof lessonGroups; accent: string }) {
+function BookSection({ title, groups }: { title: string; groups: typeof lessonGroups }) {
   return (
     <section>
       <h2
         className="text-xl font-bold mb-3 pb-1"
-        style={{ color: accent, borderBottom: `2px solid ${accent}` }}
+        style={{ color: ACCENT, borderBottom: `2px solid ${ACCENT}` }}
       >
         {title}
       </h2>
@@ -34,22 +35,25 @@ function BookSection({ title, groups, accent }: { title: string; groups: typeof 
               Lesson {g.lesson}: {g.title}
             </h3>
             <ul>
-              {g.points.map(pt => (
-                <li key={pt.id}>
-                  <Link
-                    to={`/point/${pt.id}`}
-                    className="flex items-center gap-2 rounded-lg px-2 min-h-[44px] group hover:bg-gray-100 active:bg-gray-200 transition-colors"
-                  >
-                    <span className="text-gray-400 text-xs w-10 shrink-0 tabular-nums">
-                      {pt.isExpressionNote ? '表現' : `L${pt.lesson}`}
-                    </span>
-                    <span className="group-hover:underline flex-1 leading-snug py-0.5" style={{ color: accent }}>
-                      <Html html={pt.title} />
-                    </span>
-                    <span className="text-gray-300 text-xs shrink-0">{pt.page}</span>
-                  </Link>
-                </li>
-              ))}
+              {g.points.map(pt => {
+                const color = pt.isExpressionNote ? EXPR_COLOR : ACCENT;
+                return (
+                  <li key={pt.id}>
+                    <Link
+                      to={`/point/${pt.id}`}
+                      className="flex items-center gap-2 rounded-lg px-2 min-h-[44px] group hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                    >
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: color }}
+                      />
+                      <span className="group-hover:underline flex-1 leading-snug py-0.5" style={{ color }}>
+                        <Html html={stripTitleHtml(pt.title)} />
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}

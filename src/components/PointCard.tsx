@@ -1,27 +1,23 @@
 import { Html } from '../lib/ruby';
+import { stripTitleHtml, stripHonbunDialogue } from '../lib/title';
 import type { GrammarPoint } from '../types';
 
-const GENKI1 = '#FF9933';
-const GENKI2 = '#66BB55';
+const ACCENT = '#66BB55';
+const EXPR_COLOR = '#3CAEA3';
 
 interface Props {
   point: GrammarPoint;
 }
 
 export default function PointCard({ point }: Props) {
-  const accent = point.book === 'Genki II' ? GENKI2 : GENKI1;
+  const accent = point.isExpressionNote ? EXPR_COLOR : ACCENT;
 
   return (
     <div style={{ '--accent': accent } as React.CSSProperties}>
       {/* Title row */}
       <div className="flex items-start justify-between gap-4 mb-3">
         <h1 className="text-xl font-bold leading-snug" style={{ color: accent }}>
-          <Html html={point.title} />
-          {point.isExpressionNote && (
-            <span className="ml-2 text-sm font-normal" style={{ color: accent }}>
-              (Expression Note)
-            </span>
-          )}
+          <Html html={stripTitleHtml(point.title)} />
         </h1>
         <span
           className="text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap flex-shrink-0 self-center"
@@ -41,7 +37,7 @@ export default function PointCard({ point }: Props) {
                 <ul>
                   {point.honbun.map((h, i) => (
                     <li key={i}>
-                      <Html html={h.text} />
+                      <Html html={stripHonbunDialogue(h.text)} />
                       {h.ref && <><br /><Html html={h.ref} /></>}
                     </li>
                   ))}
@@ -121,29 +117,6 @@ export default function PointCard({ point }: Props) {
                     </li>
                   ))}
                 </ol>
-              </td>
-            </tr>
-          )}
-
-          {point.practice.length > 0 && (
-            <tr className="ex-list">
-              <td><ruby>練習<rt>れんしゅう</rt></ruby></td>
-              <td>
-                <ul>
-                  {point.practice.map((lk, i) => (
-                    <li key={i}>
-                      <a
-                        href={lk.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: accent }}
-                        className="underline"
-                      >
-                        {lk.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
               </td>
             </tr>
           )}
