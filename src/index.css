@@ -1,10 +1,21 @@
 @import "tailwindcss";
 
-/* ── Base: match source site font/color ── */
+/* ── Base: mobile-first font/color ── */
 body {
   font-family: 'メイリオ', 'Meiryo', 'Osaka', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'Noto Sans JP', Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@media (min-width: 640px) {
+  body { font-size: 14px; }
+}
+
+/* Remove 300ms tap delay everywhere */
+a, button, [role="button"], input, select, label {
+  touch-action: manipulation;
 }
 
 /* ── Furigana ── */
@@ -52,19 +63,27 @@ mark {
   border-collapse: collapse;
   width: 100%;
   border: 1px solid #DDD;
+  table-layout: fixed;
 }
 
 .grammar-table > tbody > tr > td {
   font-size: 15px;
   border: 1px solid #DDD;
   vertical-align: top;
-  padding: 3px;
+  padding: 6px;
+}
+
+@media (max-width: 639px) {
+  .grammar-table > tbody > tr > td {
+    font-size: 14px;
+    padding: 5px 4px;
+  }
 }
 
 /* label column */
 .grammar-table > tbody > tr > td:first-child {
-  width: 60px;
-  min-width: 60px;
+  width: 52px;
+  min-width: 52px;
   font-weight: bold;
   text-align: center;
   background: #EEE;
@@ -75,9 +94,17 @@ mark {
 /* content column */
 .grammar-table > tbody > tr > td:nth-child(2) {
   background: #F7F7F7;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 /* ── Inner tables (inside explanation HTML) ── */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .table {
   border-collapse: collapse;
   width: 100%;
@@ -103,8 +130,8 @@ mark {
 .example {
   border: 1px solid #CCC;
   border-left: 3px solid var(--accent);
-  margin: 10px 5px;
-  padding: 5px;
+  margin: 8px 3px;
+  padding: 6px 8px;
   background: #FFF;
 }
 
@@ -116,16 +143,16 @@ mark {
 .columns-2-in > .example {
   display: inline-block;
   width: 47%;
-  margin: 10px 5px;
+  margin: 8px 4px;
   vertical-align: top;
   box-sizing: border-box;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 640px) {
   .columns-2-in > .example {
     display: block;
     width: auto;
-    margin: 5px 0;
+    margin: 6px 0;
   }
 }
 
@@ -134,14 +161,14 @@ mark {
 .table td ul {
   list-style-type: disc;
   margin: 0;
-  padding-left: 30px;
+  padding-left: 24px;
 }
 
 .grammar-table td ol,
 .table td ol {
   list-style-type: decimal;
   margin: 0;
-  padding-left: 30px;
+  padding-left: 24px;
 }
 
 .grammar-table td li,

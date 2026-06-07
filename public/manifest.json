@@ -1,0 +1,21 @@
+{
+  "name": "Genki Grammar Reference",
+  "short_name": "Genki Ref",
+  "description": "Pocket grammar reference for Genki I & II (3rd Edition) — 197 grammar points",
+  "start_url": "/genki/",
+  "scope": "/genki/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#66BB55",
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "categories": ["education", "reference"],
+  "icons": [
+    {
+      "src": "/genki/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -30,7 +30,7 @@ function BookSection({ title, groups, accent }: { title: string; groups: typeof 
       <div className="space-y-4">
         {groups.map(g => (
           <div key={g.lesson}>
-            <h3 className="font-semibold text-gray-600 text-sm mb-1">
+            <h3 className="font-semibold text-gray-500 text-xs uppercase tracking-wide mb-1 px-2">
               Lesson {g.lesson}: {g.title}
             </h3>
             <ul>
@@ -38,15 +38,15 @@ function BookSection({ title, groups, accent }: { title: string; groups: typeof 
                 <li key={pt.id}>
                   <Link
                     to={`/point/${pt.id}`}
-                    className="flex items-baseline gap-2 rounded px-2 py-0.5 group hover:bg-gray-100"
+                    className="flex items-center gap-2 rounded-lg px-2 min-h-[44px] group hover:bg-gray-100 active:bg-gray-200 transition-colors"
                   >
-                    <span className="text-gray-400 text-xs w-12 shrink-0">
+                    <span className="text-gray-400 text-xs w-10 shrink-0 tabular-nums">
                       {pt.isExpressionNote ? '表現' : `L${pt.lesson}`}
                     </span>
-                    <span className="group-hover:underline" style={{ color: accent }}>
+                    <span className="group-hover:underline flex-1 leading-snug py-0.5" style={{ color: accent }}>
                       <Html html={pt.title} />
                     </span>
-                    <span className="text-gray-400 text-xs ml-auto">{pt.page}</span>
+                    <span className="text-gray-300 text-xs shrink-0">{pt.page}</span>
                   </Link>
                 </li>
               ))}

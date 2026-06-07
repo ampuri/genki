@@ -7,6 +7,12 @@ import HomePage from './pages/HomePage';
 import PointPage from './pages/PointPage';
 import NotFound from './pages/NotFound';
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/genki/sw.js').catch(() => {});
+  });
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HashRouter>
